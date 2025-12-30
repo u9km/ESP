@@ -1,9 +1,9 @@
-Package: com.you.sovereignsecurity
-Name: SovereignSecurity
-Version: 1.0.0
-Architecture: iphoneos-arm
-Description: نظام ESP تعليمي (للتجربة فقط)
-Maintainer: You
-Author: You
+Package: com.sovereign.security
+Name: SovereignElite
+Version: 6.0.0
+Architecture: iphoneos-arm64
+Description: نظام كشف ذكي وحماية متقدمة للمشروع.
+Maintainer: SovereignTeam
+Author: EliteDeveloper
 Section: Tweaks
-Depends: mobilesubstrate (>= 0.9.5000)
+Depends: mobilesubstrate
