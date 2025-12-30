@@ -1,26 +1,29 @@
-# تحديد المعماريات المستهدفة
-ARCHS = arm64 arm64e
+# تحديد المعماريات (arm64 ضرورية للأجهزة الحديثة 64-بت)
+ARCHS = arm64
 
-# استهداف إصدار iOS متوافق
+# استهداف إصدار نظام مستقر لضمان عمل واجهة UIKit بدون كراش
 TARGET = iphone:clang:latest:12.0
 
-# وضع الروتلس للحقن بدون جلبريك
+# نمط الروتلس (مطلوب للحقن اليدوي في ملفات IPA بدون جلبريك)
 THEOS_PACKAGE_SCHEME = rootless
 
+# تضمين ملفات تعريف Theos الأساسية
 include $(THEOS)/makefiles/common.mk
 
+# اسم التويك الناتج (سيتم إنتاج ملف SovereignSecurity.dylib)
 TWEAK_NAME = SovereignSecurity
 
-# تحديد كافة الملفات البرمجية المتوافقة
+# تحديد ملف الكود المدمج (تأكد من تسمية ملفك بهذا الاسم في GitHub)
 SovereignSecurity_FILES = SovereignSecurity.m
 
-# إضافة المكتبيات اللازمة للرسم والحماية
+# إعدادات المترجم (تفعيل ARC لإدارة الذاكرة تلقائياً ومنع اللاق)
+SovereignSecurity_CFLAGS = -fobjc-arc
+
+# المكتبات الضرورية جداً لرسم الزر العائم والمنيو والاهتزاز
 SovereignSecurity_FRAMEWORKS = UIKit Foundation CoreGraphics QuartzCore AudioToolbox
 
-# إعدادات المترجم لمنع أخطاء الذاكرة
-SovereignSecurity_CFLAGS = -fobjc-arc -Wno-deprecated-declarations
-
-# مواءمة القطاعات لمنع الكراش عند الحقن اليدوي
+# سطر منع الكراش عند بدء التشغيل وتعديل مواءمة القطاعات للحقن اليدوي
 SovereignSecurity_LDFLAGS += -Wl,-segalign,4000
 
+# إنهاء بناء التويك
 include $(THEOS_MAKE_PATH)/tweak.mk
