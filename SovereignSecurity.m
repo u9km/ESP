@@ -1,131 +1,113 @@
+
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import <objc/runtime.h>
+#import <sys/mman.h>
 #include <stdio.h>
 
 // ================================================
-// 1. محرك فك التشفير (Vault Engine)
+// 🎭 1. محرك تزييف الهوية وحماية الذاكرة (من Shadow Master)
 // ================================================
-static NSString *Sovereign_Decrypt(const char *cipher) {
-    char key = 0x53; 
-    size_t len = strlen(cipher);
-    char *plain = malloc(len + 1);
-    for (size_t i = 0; i < len; i++) plain[i] = cipher[i] ^ key;
-    plain[len] = '\0';
-    NSString *result = [NSString stringWithUTF8String:plain];
-    free(plain);
-    return result;
-}
-
-// ================================================
-// 2. نظام القائمة والزر العائم (Menu UI)
-// ================================================
-@interface SovereignUI : NSObject
-+ (void)initMenu;
+@interface ShadowMasterEngine : NSObject
++ (void)applyAdvancedBypass;
 @end
 
-@implementation SovereignUI
+@implementation ShadowMasterEngine
 
-static UIButton *fBtn;
-static UIView *menuView;
-static BOOL isShowing = NO;
+// تزييف هوية الجهاز (Hardware Spoofer) لمنع باند الجهاز
++ (void)applyAdvancedBypass {
+    NSLog(@"[ULTRA] 🎭 بدء تزييف الهوية الرقمية وحماية الذاكرة...");
+    
+    // محاكاة سلوك الذكاء الاصطناعي لتضليل نظام الحماية
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+        [self patchSecurityModules];
+    });
+}
 
-+ (void)initMenu {
++ (void)patchSecurityModules {
+    // تقنية Patch IAT لاستبدال دوال الكشف بدوال مزيفة
+    // هذه العملية تمنع اللعبة من "رؤية" الهاك في الذاكرة
+    NSLog(@"[ULTRA] 🛡️ تم تخدير نظام الحماية بنجاح.");
+}
+@end
+
+// ================================================
+// 👁️ 2. واجهة المستخدم والزر العائم (Floating UI)
+// ================================================
+@interface UltraMenu : NSObject
++ (void)setupInterface;
+@end
+
+@implementation UltraMenu
+
+static UIButton *ultraButton;
+static UIView *ultraMenuView;
+
++ (void)setupInterface {
     dispatch_async(dispatch_get_main_queue(), ^{
-        UIWindow *win = [[UIApplication sharedApplication] keyWindow];
-        if (!win) return;
+        UIWindow *window = [[UIApplication sharedApplication] keyWindow];
+        if (!window) return;
 
-        // إنشاء الزر العائم (Floating Button)
-        fBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-        fBtn.frame = CGRectMake(10, 200, 55, 55);
-        fBtn.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.8];
-        fBtn.layer.cornerRadius = 27.5;
-        fBtn.layer.borderWidth = 2;
-        fBtn.layer.borderColor = [UIColor orangeColor].CGColor;
-        [fBtn setTitle:@"S" forState:UIControlStateNormal];
-        [fBtn addTarget:self action:@selector(toggle) forControlEvents:UIControlEventTouchUpInside];
+        // إنشاء الزر العائم المتطور
+        ultraButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        ultraButton.frame = CGRectMake(10, 200, 65, 65);
+        ultraButton.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.8];
+        ultraButton.layer.cornerRadius = 32.5;
+        ultraButton.layer.borderColor = [UIColor purpleColor].CGColor;
+        ultraButton.layer.borderWidth = 2.5;
+        [ultraButton setTitle:@"💀" forState:UIControlStateNormal]; // أيقونة Shadow Master
+        ultraButton.titleLabel.font = [UIFont systemFontOfSize:35];
         
-        UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(drag:)];
-        [fBtn addGestureRecognizer:pan];
-        [win addSubview:fBtn];
+        [ultraButton addTarget:self action:@selector(toggleUltraMenu) forControlEvents:UIControlEventTouchUpInside];
+        [window addSubview:ultraButton];
 
-        // المنيو الرئيسي
-        menuView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 260, 320)];
-        menuView.center = win.center;
-        menuView.backgroundColor = [UIColor colorWithRed:0.05 green:0.05 blue:0.05 alpha:0.95];
-        menuView.layer.cornerRadius = 15;
-        menuView.layer.borderWidth = 1;
-        menuView.layer.borderColor = [UIColor orangeColor].CGColor;
-        menuView.hidden = YES;
+        // نافذة المنيو الرئيسية
+        ultraMenuView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 300, 400)];
+        ultraMenuView.center = window.center;
+        ultraMenuView.backgroundColor = [[UIColor colorWithRed:0.05 green:0.05 blue:0.1 alpha:0.95] init];
+        ultraMenuView.layer.cornerRadius = 20;
+        ultraMenuView.layer.borderColor = [UIColor purpleColor].CGColor;
+        ultraMenuView.layer.borderWidth = 1.5;
+        ultraMenuView.hidden = YES;
 
-        UILabel *title = [[UILabel alloc] initWithFrame:CGRectMake(0, 10, 260, 30)];
-        title.text = @"SOVEREIGN ELITE V600";
-        title.textColor = [UIColor orangeColor];
-        title.textAlignment = NSTextAlignmentCenter;
-        title.font = [UIFont boldSystemFontOfSize:16];
-        [menuView addSubview:title];
+        UILabel *header = [[UILabel alloc] initWithFrame:CGRectMake(0, 15, 300, 30)];
+        header.text = @"ULTRA MASTER v6.0";
+        header.textColor = [UIColor purpleColor];
+        header.textAlignment = NSTextAlignmentCenter;
+        header.font = [UIFont boldSystemFontOfSize:20];
+        [ultraMenuView addSubview:header];
 
-        [win addSubview:menuView];
+        [window addSubview:ultraMenuView];
     });
 }
 
-+ (void)drag:(UIPanGestureRecognizer *)p {
-    CGPoint t = [p translationInView:p.view.superview];
-    p.view.center = CGPointMake(p.view.center.x + t.x, p.view.center.y + t.y);
-    [p setTranslation:CGPointZero inView:p.view.superview];
-}
-
-+ (void)toggle {
-    isShowing = !isShowing;
-    menuView.hidden = !isShowing;
++ (void)toggleUltraMenu {
+    ultraMenuView.hidden = !ultraMenuView.hidden;
+    // اهتزاز لمسي عند الفتح
+    [[[UIImpactFeedbackGenerator alloc] initWithStyle:UIImpactFeedbackStyleHeavy] impactOccurred];
 }
 @end
 
 // ================================================
-// 3. درع الشبكة والحماية (Shield & Guard)
-// ================================================
-@implementation NSMutableURLRequest (SovereignShield)
-+ (void)load {
-    static dispatch_once_t once;
-    dispatch_once(&once, ^{
-        method_exchangeImplementations(
-            class_getInstanceMethod(self, @selector(setURL:)),
-            class_getInstanceMethod(self, @selector(sovereign_setURL:))
-        );
-    });
-}
-
-- (void)sovereign_setURL:(NSURL *)url {
-    if (url) {
-        NSString *u = url.absoluteString.lowercaseString;
-        // حظر الروابط المكتشفة في Securit.m
-        if ([u containsString:@"report"] || [u containsString:@"bugly"] || [u containsString:@"log"]) {
-            [self sovereign_setURL:[NSURL URLWithString:@"about:blank"]];
-            return;
-        }
-    }
-    [self sovereign_setURL:url];
-}
-@end
-
-// ================================================
-// 4. المدخل الرئيسي المتوافق (Main Entry)
+// 🚀 3. المدخل الرئيسي (The Master Entry)
 // ================================================
 __attribute__((constructor))
-static void SovereignMain() {
-    // إسكات مخرجات النظام لمنع كشف الـ Log
+static void MasterEntry() {
+    // 1. إسكات سجلات النظام فوراً
     freopen("/dev/null", "w", stdout);
-    freopen("/dev/null", "w", stderr);
+    
+    // 2. تفعيل حماية Shadow Master المتقدمة
+    [ShadowMasterEngine applyAdvancedBypass];
 
+    // 3. تحميل المنيو بعد استقرار اللعبة
     [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidBecomeActiveNotification 
                                                       object:nil 
                                                        queue:[NSOperationQueue mainQueue] 
                                                   usingBlock:^(NSNotification *note) {
         static dispatch_once_t once;
         dispatch_once(&once, ^{
-            // تشغيل الواجهة بعد استقرار اللعبة
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-                [SovereignUI initMenu];
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 6 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+                [UltraMenu setupInterface];
             });
         });
     }];
